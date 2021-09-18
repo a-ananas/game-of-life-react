@@ -38,11 +38,11 @@ function Cell(props){
 //https://fr.reactjs.org/docs/jsx-in-depth.html#functions-as-children
 class Board extends React.Component {
 
-  renderCell(i, key) {
+  renderCell(row, col, key) {
       return(
         <Cell
-          value={this.props.cells[i]}
-          onClick={() => this.props.onClick(i)}
+          value={this.props.cells[row][col]}
+          onClick={() => this.props.onClick({row: row, col: col})}
           key={key}
         />
       );
@@ -58,14 +58,9 @@ class Board extends React.Component {
         //don't know if we could do a matrix representation easier
         //should work, return inside a loop don't seem a bad idea
         //1 return per render ?
-        let numIndex = cols + boardSize*rows;
-        let matIndex = rows.toString() + cols.toString();
+        let index = rows.toString()+','+ cols.toString();
         cellsInRow.push(
-          <Cell
-            value = {this.props.cells[numIndex]}
-            onClick={() => this.props.onClick(numIndex)}
-            key={matIndex}
-          />
+          this.renderCell(rows, cols, index)
         );
       }
       board.push(<div className="board-row" key={rows}>{cellsInRow}</div>);
@@ -84,20 +79,22 @@ class Game extends React.Component {
     const boardSize = 25
     this.state = {
       boardSize: boardSize,
-      cells: Array(boardSize**2).fill(false),
+      //two dimensionnal Array, cells[row][col]
+      cells: Array(boardSize).fill(Array(boardSize).fill(false)),
     };
   }
 
-  handleClick(i) {
+  handleClick(props) {
     const cells = this.state.cells.slice();
-    cells[i] = !cells[i];
+    cells[props.row][props.col] = !cells[props.row][props.col]
     this.setState({
       cells: cells,
     });
+    //adding here 1 to the 8 neighbours on Click
   }
 
   render() {
-    const cells = this.state.cells;
+    const cells = this.state.cells.slice();
     const boardSize = this.state.boardSize;
     return(
       <div className="game">
@@ -105,7 +102,7 @@ class Game extends React.Component {
           <Board
             cells={cells}
             boardSize={boardSize}
-            onClick={(i) => this.handleClick(i)}
+            onClick={(props) => this.handleClick(props)}
           />
         </div>
       </div>
