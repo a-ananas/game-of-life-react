@@ -57,25 +57,43 @@ class Game extends React.Component {
     for (let i = 0; i < boardSize; i++){
       cells[i] = new Array(boardSize).fill(false);
     }
+    let neighbours = [];
+    for (let i = 0; i < boardSize; i++){
+      neighbours[i] = new Array(boardSize).fill(0);
+    }
     this.state = {
       boardSize: boardSize,
       //two dimensionnal Array, cells[row][col]
       cells: cells,
+      neighbours: neighbours,
     };
   }
 
   handleClick(props) {
+    const row = props.row;
+    const col = props.col;
+
     const cells = this.state.cells.slice();
     cells[props.row][props.col] = !(cells[props.row][props.col])
+
+    const neighbours = this.state.neighbours.slice();
+    //add 1 to all the 8 neighbours on click
+    for(let j = row-1; j<=row+1; j++){
+      for(let i = col-1; i<=col+1; i++){
+        neighbours[j][i]++
+      }
+    }
+
     this.setState({
       cells: cells,
+      neighbours: neighbours,
     });
-    //adding here 1 to the 8 neighbours on Click
   }
 
   render() {
     const cells = this.state.cells.slice();
     const boardSize = this.state.boardSize;
+    console.table(this.state.neighbours);
     return(
       <div className="game">
         <div className="game-board">
