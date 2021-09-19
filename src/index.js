@@ -53,12 +53,12 @@ class Board extends React.Component {
     let board = [];
 
     for (let rows = 0; rows < boardSize; rows++){
-      var cellsInRow = [];
+      let cellsInRow = [];
       for (let cols = 0; cols < boardSize; cols++){
         //don't know if we could do a matrix representation easier
         //should work, return inside a loop don't seem a bad idea
         //1 return per render ?
-        let index = rows.toString()+','+ cols.toString();
+        const index = rows.toString()+','+ cols.toString();
         cellsInRow.push(
           this.renderCell(rows, cols, index)
         );
@@ -76,17 +76,23 @@ class Board extends React.Component {
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    const boardSize = 25
+    const boardSize = 10;
+    // bug w/ Array(n).fill(Array(n).fill(true)) because all arrays are linked
+    // cf : https://stackoverflow.com/questions/9979560/javascript-multidimensional-array-updating-specific-element
+    let cells = [];
+    for (let i = 0; i < boardSize; i++){
+      cells[i] = new Array(boardSize).fill(false);
+    }
     this.state = {
       boardSize: boardSize,
       //two dimensionnal Array, cells[row][col]
-      cells: Array(boardSize).fill(Array(boardSize).fill(false)),
+      cells: cells,
     };
   }
 
   handleClick(props) {
     const cells = this.state.cells.slice();
-    cells[props.row][props.col] = !cells[props.row][props.col]
+    cells[props.row][props.col] = !(cells[props.row][props.col])
     this.setState({
       cells: cells,
     });
