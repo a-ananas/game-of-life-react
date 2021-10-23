@@ -74,13 +74,44 @@ class Game extends React.Component {
     const col = props.col;
 
     const cells = this.state.cells.slice();
-    cells[props.row][props.col] = !(cells[props.row][props.col])
+    cells[row][col] = !(cells[row][col])
 
     const neighbours = this.state.neighbours.slice();
-    //add 1 to all the 8 neighbours on click
-    for(let j = row-1; j<=row+1; j++){
-      for(let i = col-1; i<=col+1; i++){
-        neighbours[j][i]++
+    const boardSize = this.state.boardSize;
+
+  //add 1 to all the 8 neighbours on click ; w/ rules :
+    //adding or substracting to neighbours depending on the cell status
+    let neighb_val = 1;
+    if (cells[row][col]){
+      neighb_val = 1;
+    } else {
+      neighb_val = -1;
+    }
+
+    //limit handling
+    let row_top, row_bot, col_left, col_right;
+    row_top = row_bot = col_left = col_right = 1;
+
+    if (row === 0) {
+      row_top = 0;
+    } else if (row === boardSize-1){
+      row_bot = 0
+    } else {}
+
+    if (col === 0) {
+      col_left = 0;
+    } else if (col === boardSize-1){
+      col_right = 0
+    } else {}
+
+    //actual loop, adding the neighbours values
+    for(let j = row-row_top; j<=row+row_bot; j++){
+      for(let i = col-col_left; i<=col+col_right; i++){
+        if (i === col && j === row){
+          neighbours[j][i] += 0;
+        } else {
+          neighbours[j][i] += neighb_val;
+        }
       }
     }
 
